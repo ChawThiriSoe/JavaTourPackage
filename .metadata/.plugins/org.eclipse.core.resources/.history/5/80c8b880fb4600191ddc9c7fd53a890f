@@ -1,0 +1,163 @@
+package TourPackage;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JRadioButton;
+
+public class OperatorLogin extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField txtNa;
+	private JTextField txtPw;
+	private JButton btnLogin;
+	Connection conn;
+	String db="jdbc:mysql://localhost/tourpackagedb";
+	String username="root";
+	String password="root";
+	java.sql.Statement stmt;
+	String sql;
+	ResultSet rs;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					OperatorLogin frame = new OperatorLogin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public OperatorLogin() {
+		setTitle("Login Form for Operators");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 523, 360);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 222, 173));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblLoginForm = new JLabel("Login Form");
+		lblLoginForm.setFont(new Font("Times New Roman", Font.BOLD, 16));
+		lblLoginForm.setBounds(213, 11, 92, 25);
+		contentPane.add(lblLoginForm);
+		
+		JLabel lblName = new JLabel("Name");
+		lblName.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblName.setBounds(83, 69, 46, 14);
+		contentPane.add(lblName);
+		
+		JLabel lblPassword = new JLabel("Password");
+		lblPassword.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblPassword.setBounds(83, 112, 73, 14);
+		contentPane.add(lblPassword);
+		
+		txtNa = new JTextField();
+		txtNa.setBackground(new Color(211, 211, 211));
+		txtNa.setBounds(252, 67, 153, 20);
+		contentPane.add(txtNa);
+		txtNa.setColumns(10);
+		
+		txtPw = new JTextField();
+		txtPw.setBackground(new Color(211, 211, 211));
+		txtPw.setColumns(10);
+		txtPw.setBounds(252, 110, 153, 20);
+		contentPane.add(txtPw);
+		
+		btnLogin = new JButton("Login");
+		btnLogin.setBackground(new Color(244, 164, 96));
+		btnLogin.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		btnLogin.setBounds(316, 162, 89, 23);
+		contentPane.add(btnLogin);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 222, 173));
+		panel.setBounds(76, 204, 346, 106);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		panel.setVisible(false);
+		
+		JRadioButton radioButton = new JRadioButton("Go to Package Information Page");
+		radioButton.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		radioButton.setBackground(new Color(255, 222, 173));
+		radioButton.setBounds(6, 7, 243, 23);
+		panel.add(radioButton);
+		
+		JRadioButton radioButton_1 = new JRadioButton("Go to Information Page");
+		radioButton_1.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		radioButton_1.setBackground(new Color(255, 222, 173));
+		radioButton_1.setBounds(6, 46, 243, 23);
+		panel.add(radioButton_1);
+		
+		JButton button = new JButton("OK");
+		button.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		button.setBackground(new Color(244, 164, 96));
+		button.setBounds(239, 76, 89, 23);
+		panel.add(button);
+		
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				boolean flag=false;
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					sql="select * from operatortb";
+					rs=stmt.executeQuery(sql);
+					while(rs.next()) {
+						if((txtNa.getText().equals(rs.getString("oname"))) && 
+								(txtPw.getText().equals(rs.getString("opwd")))) {
+							Package frame=new Package();
+							frame.setVisible(true);
+							flag=true;
+						}
+					}
+					if(!flag) {
+						JOptionPane.showMessageDialog(null, "Operator's name and Password aren't match!!\nPlease Right again!!");
+						OperatorLogin frame=new OperatorLogin();
+						frame.setVisible(true);
+					}
+
+					stmt.close();
+					conn.close();
+				}catch(Exception e1) {
+					System.out.println("Error"+e1);
+				}
+			}
+		});
+	}
+	void createDB() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = (Connection) DriverManager.getConnection(db, username, password);
+		} catch (Exception e) {
+			System.out.println("error");
+		}
+	}
+}

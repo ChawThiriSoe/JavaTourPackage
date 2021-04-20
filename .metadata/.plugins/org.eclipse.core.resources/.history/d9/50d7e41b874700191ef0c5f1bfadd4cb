@@ -1,0 +1,11 @@
+package TourPackage;
+
+public class Person {
+	String pname;
+	String pdob;
+	String pnrc;
+	String pgender;
+	String pphno;
+	String pemail;
+	String paddress;
+}

@@ -1,0 +1,94 @@
+package TourPackage;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JRadioButton;
+import java.awt.Color;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+
+public class BeforeLogin extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					BeforeLogin frame = new BeforeLogin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public BeforeLogin() {
+		setTitle("Main Login Form");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 322);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 218, 185));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel label = new JLabel("Are you Customer OR Operator?");
+		label.setFont(new Font("Times New Roman", Font.BOLD, 16));
+		label.setBounds(88, 141, 229, 23);
+		contentPane.add(label);
+		
+		JRadioButton rdbtnCustomer = new JRadioButton("Customer");
+		rdbtnCustomer.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 15));
+		rdbtnCustomer.setBackground(new Color(216, 191, 216));
+		rdbtnCustomer.setBounds(60, 190, 109, 23);
+		contentPane.add(rdbtnCustomer);
+		
+		JRadioButton rdbtnOperator = new JRadioButton("Operator");
+		rdbtnOperator.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 15));
+		rdbtnOperator.setBackground(new Color(216, 191, 216));
+		rdbtnOperator.setBounds(257, 190, 109, 23);
+		contentPane.add(rdbtnOperator);
+		
+		JButton btnContinue = new JButton("Continue");
+		btnContinue.setForeground(Color.WHITE);
+		btnContinue.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 16));
+		btnContinue.setBackground(new Color(65, 105, 225));
+		btnContinue.setBounds(138, 236, 162, 23);
+		contentPane.add(btnContinue);
+		
+		JLabel label_1 = new JLabel("");
+		label_1.setIcon(new ImageIcon("D:\\@Sue\\year2\\first semeter\\assignment\\Java\\Untitled.png"));
+		label_1.setBounds(0, 0, 434, 283);
+		contentPane.add(label_1);
+		
+		btnContinue.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (rdbtnCustomer.isSelected()) {
+					CustomerLogin Lo2=new CustomerLogin();
+					Lo2.setVisible(true);
+				}
+				else {
+					OperatorLogin Lo1= new OperatorLogin();
+					Lo1.setVisible(true);
+				}
+			}
+		});
+	}
+}

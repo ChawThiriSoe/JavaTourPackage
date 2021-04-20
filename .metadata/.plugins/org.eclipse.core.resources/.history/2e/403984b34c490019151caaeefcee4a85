@@ -1,0 +1,387 @@
+package TourPackage;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+
+public class Booking extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	Connection conn;
+	String db="jdbc:mysql://localhost/tourpackagedb";
+	String username="root";
+	String password="root";
+	java.sql.Statement stmt;
+	String sql;
+	ResultSet rs;
+	private JTextField txtCname;
+	private JTextField txtNo;
+	private JTextField txtDate;
+	int price;
+	int id;
+	int am;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Booking frame = new Booking();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Booking() {
+		setTitle("Booking Information");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 708, 500);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 222, 173));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblChooseAType = new JLabel("Choose a type of Package");
+		lblChooseAType.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblChooseAType.setBounds(128, 65, 169, 19);
+		contentPane.add(lblChooseAType);
+		
+		ButtonGroup group=new ButtonGroup();
+
+		table = new JTable();
+		table.setBackground(new Color(255, 218, 185));
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setBounds(10, 289, 674, 109);
+		contentPane.add(scrollPane);
+		scrollPane.setVisible(false);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(338, 65, 203, 20);
+		comboBox.setBackground(new Color(211, 211, 211));
+		comboBox.addItem("Premium Package");
+		comboBox.addItem("Standard Package");
+		contentPane.add(comboBox);
+		
+		JLabel lblBookingId = new JLabel("Booking ID");
+		lblBookingId.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblBookingId.setBounds(128, 112, 169, 19);
+		contentPane.add(lblBookingId);
+		
+		JLabel lblPackageId = new JLabel("Package ID");
+		lblPackageId.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblPackageId.setBounds(128, 155, 169, 19);
+		contentPane.add(lblPackageId);
+		
+		JLabel lblCustomerName = new JLabel("Customer Name");
+		lblCustomerName.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblCustomerName.setBounds(128, 198, 169, 19);
+		contentPane.add(lblCustomerName);
+		
+		JLabel lblNoOfPeople = new JLabel("Number of People");
+		lblNoOfPeople.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblNoOfPeople.setBounds(128, 244, 169, 19);
+		contentPane.add(lblNoOfPeople);
+		
+		txtCname = new JTextField();
+		txtCname.setColumns(10);
+		txtCname.setBackground(new Color(211, 211, 211));
+		txtCname.setBounds(338, 198, 203, 20);
+		contentPane.add(txtCname);
+		
+		txtNo = new JTextField();
+		txtNo.setColumns(10);
+		txtNo.setBackground(new Color(211, 211, 211));
+		txtNo.setBounds(338, 244, 203, 20);
+		contentPane.add(txtNo);
+		
+		JButton btnBook = new JButton("BOOK");
+		btnBook.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnBook.setBackground(new Color(255, 160, 122));
+		btnBook.setBounds(475, 427, 130, 23);
+		contentPane.add(btnBook);
+		
+		JLabel lblBid = new JLabel("");
+		lblBid.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblBid.setBounds(338, 115, 176, 14);
+		contentPane.add(lblBid);
+		
+		JLabel lblPgid = new JLabel("");
+		lblPgid.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblPgid.setBounds(338, 158, 176, 14);
+		contentPane.add(lblPgid);
+		
+		JLabel lblDate = new JLabel("Date");
+		lblDate.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblDate.setBounds(128, 21, 169, 19);
+		contentPane.add(lblDate);
+		
+		txtDate = new JTextField();
+		txtDate.setColumns(10);
+		txtDate.setBackground(new Color(211, 211, 211));
+		txtDate.setBounds(338, 21, 203, 20);
+		contentPane.add(txtDate);
+		
+
+		table.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+						"ID","Name","Date","Type","Description","Price","Promotion"
+				}));
+		
+		JButton btnBack = new JButton("BACK");
+		btnBack.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnBack.setBackground(new Color(255, 160, 122));
+		btnBack.setBounds(65, 427, 89, 23);
+		contentPane.add(btnBack);
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon("C:\\Users\\Aspire\\Pictures\\Saved Pictures\\2.jpg"));
+		label.setBounds(0, 0, 692, 461);
+		contentPane.add(label);
+		
+		DefaultTableModel model=(DefaultTableModel) table.getModel();
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					createDB();
+					
+					stmt=conn.createStatement();
+					sql="select * from packagetb";
+					rs=stmt.executeQuery(sql);
+					
+					
+					while(rs.next()) {
+						String getty=rs.getString("type");
+						if (getty.contentEquals(comboBox.getSelectedItem().toString())) {
+							String rno=Integer.toString(rs.getInt("pgid"));
+							String name=rs.getString("pgname");
+							String date=rs.getString("pgdate");
+							String type=rs.getString("type");
+							String description=rs.getString("description");
+							String price=Integer.toString(rs.getInt("price"));
+							String promo=rs.getString("promotion");
+							
+							String data[]=new String [] {rno,name,date,type,description,price,promo};
+							model.addRow(data);
+
+							scrollPane.setVisible(true);
+						}
+					}
+					stmt.close();
+					conn.close();
+				}catch(Exception e1) {
+					System.out.println("Error"+e1);
+				}
+			}
+		});
+		
+
+		btnBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					sql="select MAX(bid) from bookingtb";
+					rs=stmt.executeQuery(sql);
+					
+					while(rs.next()) {
+						int count=rs.getInt(1);
+						lblBid.setText(String.valueOf(count+1));
+					}
+				}catch(Exception e1) {
+					System.out.println("Error"+e1);
+				}
+				
+				
+				
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					sql="select MAX(infoid) from informationtb";
+					rs=stmt.executeQuery(sql);
+					
+					while(rs.next()) {
+						int count=rs.getInt(1)+1;
+						id=count;
+					}
+				}catch(Exception e1) {
+					System.out.println("Error"+e1);
+				}
+				
+				
+				
+				int i=table.getSelectedRow();
+				price=Integer.parseInt((String) model.getValueAt(i, 5));
+				int no=Integer.parseInt(txtNo.getText());
+				int am1=(int) (price*no*1.3);
+				int am2=price*no;
+				
+				int choice=JOptionPane.showConfirmDialog(null, "Are You sure that your package type is "
+						+comboBox.getSelectedItem());
+				
+				
+				
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					
+					
+					//============Insert===============
+					
+					if(comboBox.getSelectedItem().toString()=="Premium Package") {
+						if(choice==JOptionPane.YES_OPTION) {
+							String sqlinsert="INSERT INTO bookingtb VALUES ("+Integer.parseInt(lblBid.getText())+",'"
+									+txtDate.getText()+"',"+Integer.parseInt(txtNo.getText())+","+am1+",'"
+									+txtCname.getText()+"',"+Integer.parseInt(lblPgid.getText())+")";
+							stmt.executeUpdate(sqlinsert);
+							JOptionPane.showMessageDialog(null, "Book Successful !!");
+							Information frame=new Information();
+							frame.setVisible(true);
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Your package type is changed!!");
+							String sqlinsert="INSERT INTO bookingtb VALUES ("+Integer.parseInt(lblBid.getText())+",'"
+									+txtDate.getText()+"',"+Integer.parseInt(txtNo.getText())+","+am2+",'"
+									+txtCname.getText()+"',"+Integer.parseInt(lblPgid.getText())+")";
+							stmt.executeUpdate(sqlinsert);
+							JOptionPane.showMessageDialog(null, "Book Successful !!");
+							Information frame=new Information();
+							frame.setVisible(true);
+						}
+					}
+					
+					
+					else {
+						if(choice==JOptionPane.YES_OPTION) {
+							String sqlinsert="INSERT INTO bookingtb VALUES ("+Integer.parseInt(lblBid.getText())+",'"
+									+txtDate.getText()+"',"+Integer.parseInt(txtNo.getText())+","+am2+",'"
+									+txtCname.getText()+"',"+Integer.parseInt(lblPgid.getText())+")";
+							stmt.executeUpdate(sqlinsert);
+							JOptionPane.showMessageDialog(null, "Book Successful !!");
+							Information frame=new Information();
+							frame.setVisible(true);
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Your package type is changed!!");
+							String sqlinsert="INSERT INTO bookingtb VALUES ("+Integer.parseInt(lblBid.getText())+",'"
+									+txtDate.getText()+"',"+Integer.parseInt(txtNo.getText())+","+am1+",'"
+									+txtCname.getText()+"',"+Integer.parseInt(lblPgid.getText())+")";
+							stmt.executeUpdate(sqlinsert);
+							JOptionPane.showMessageDialog(null, "Book Successful !!");
+							Information frame=new Information();
+							frame.setVisible(true);
+						}
+					}	
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+				
+				
+				
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					String name= model.getValueAt(i, 1).toString();
+					String des=model.getValueAt(i, 4).toString();
+					
+					
+					//============Insert===============
+					
+					if(comboBox.getSelectedItem().toString()=="Premium Package") {
+						if(choice==JOptionPane.YES_OPTION) {
+							String sqlinsert1="INSERT INTO informationtb VALUES ("+id+",'"+txtCname.getText()+"',"+
+									Integer.parseInt(txtNo.getText())+",'"+name+"',"+am1+",'"+des+"')";
+							stmt.executeUpdate(sqlinsert1);
+						}
+						else {
+							String sqlinsert1="INSERT INTO informationtb VALUES ("+id+",'"+txtCname.getText()+"',"+
+									Integer.parseInt(txtNo.getText())+",'"+name+"',"+am2+",'"+des+"')";
+							stmt.executeUpdate(sqlinsert1);
+						}
+					}
+					else {
+						if(choice==JOptionPane.YES_OPTION) {
+							String sqlinsert1="INSERT INTO informationtb VALUES ("+id+",'"+txtCname.getText()+"',"+
+									Integer.parseInt(txtNo.getText())+",'"+name+"',"+am2+",'"+des+"')";
+							stmt.executeUpdate(sqlinsert1);
+						}
+						else {
+							String sqlinsert1="INSERT INTO informationtb VALUES ("+id+",'"+txtCname.getText()+"',"+
+									Integer.parseInt(txtNo.getText())+",'"+name+"',"+am1+",'"+des+"')";
+							stmt.executeUpdate(sqlinsert1);
+						}
+					}
+					
+							
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int i =table.getSelectedRow();
+				lblPgid.setText(model.getValueAt(i, 0).toString());
+			}
+		});
+		
+
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BeforeLogin frame=new BeforeLogin();
+				frame.setVisible(true);
+			}
+		});
+	}
+	void createDB() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = (Connection) DriverManager.getConnection(db, username, password);
+		} catch (Exception e) {
+			System.out.println("error");
+		}
+	}
+}

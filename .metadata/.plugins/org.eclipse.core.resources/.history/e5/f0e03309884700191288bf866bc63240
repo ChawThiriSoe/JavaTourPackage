@@ -1,0 +1,26 @@
+package TourPackage;
+
+public class CustomerClass extends Person{
+	int cid;
+	String cpassword;
+	public CustomerClass(String pname, String pdob, String pnrc, String pgender, String pphno, String pemail,
+			String paddress, int cid, String cpassword) {
+		super(pname, pdob, pnrc, pgender, pphno, pemail, paddress);
+		this.cid = cid;
+		this.cpassword = cpassword;
+	}
+	public int getCid() {
+		return cid;
+	}
+	public void setCid(int cid) {
+		this.cid = cid;
+	}
+	public String getCpassword() {
+		return cpassword;
+	}
+	public void setCpassword(String cpassword) {
+		this.cpassword = cpassword;
+	}
+	
+	
+}

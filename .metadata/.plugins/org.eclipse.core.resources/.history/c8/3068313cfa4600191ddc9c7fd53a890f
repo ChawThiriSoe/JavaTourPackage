@@ -1,0 +1,186 @@
+package TourPackage;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
+import java.awt.Component;
+import javax.swing.JTable;
+import javax.swing.JButton;
+
+public class Information extends JFrame {
+
+	private JPanel contentPane;
+	Connection conn;
+	String db="jdbc:mysql://localhost/tourpackagedb";
+	String username="root";
+	String password="root";
+	java.sql.Statement stmt;
+	String sql;
+	ResultSet rs;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Information frame = new Information();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Information() {
+		setTitle("Show Information");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 581, 395);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 222, 173));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblCustomerName = new JLabel("Choose a Customer's name to search the information");
+		lblCustomerName.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblCustomerName.setBounds(64, 22, 341, 14);
+		contentPane.add(lblCustomerName);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(217, 47, 171, 20);
+		contentPane.add(comboBox);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 222, 173));
+		panel.setBounds(36, 78, 494, 233);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		panel.setVisible(false);
+		
+		JLabel label_1 = new JLabel("Package Name");
+		label_1.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		label_1.setBounds(10, 11, 120, 14);
+		panel.add(label_1);
+		
+		JLabel label_2 = new JLabel("No of People");
+		label_2.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		label_2.setBounds(10, 47, 120, 14);
+		panel.add(label_2);
+		
+		JLabel label_3 = new JLabel("Total Amount");
+		label_3.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		label_3.setBounds(10, 83, 120, 14);
+		panel.add(label_3);
+		
+		JLabel label_4 = new JLabel("Description");
+		label_4.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		label_4.setBounds(10, 121, 120, 14);
+		panel.add(label_4);
+		
+		JLabel lblPname = new JLabel("");
+		lblPname.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblPname.setBounds(190, 12, 120, 14);
+		panel.add(lblPname);
+		
+		JLabel lblNo = new JLabel("");
+		lblNo.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNo.setBounds(190, 48, 120, 14);
+		panel.add(lblNo);
+		
+		JLabel lblAmo = new JLabel("");
+		lblAmo.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblAmo.setBounds(190, 84, 120, 14);
+		panel.add(lblAmo);
+		
+		JTextArea txtDe = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(txtDe);
+		scrollPane.setBounds(190, 121, 288, 92);
+		panel.add(scrollPane);
+		
+		JButton btnOk = new JButton("OK");
+		btnOk.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnOk.setBackground(new Color(255, 160, 122));
+		btnOk.setBounds(425, 322, 89, 23);
+		contentPane.add(btnOk);
+		
+		try {
+			createDB();
+			stmt=conn.createStatement();
+			sql="select cname from informationtb";
+			rs=stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				comboBox.addItem(rs.getString("cname"));
+			}
+			stmt.close();
+			conn.close();
+		}catch(Exception e1) {
+			System.out.println("Error"+e1);
+		}
+		
+		
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					sql="select * from informationtb";
+					rs=stmt.executeQuery(sql);
+
+					panel.setVisible(true);
+					
+					while(rs.next()) {
+						String name=rs.getString("cname");
+						if (name.contentEquals(comboBox.getSelectedItem().toString())) {
+							lblPname.setText(rs.getString("pgname"));
+							lblNo.setText(Integer.toString(rs.getInt("nofpe")));
+							lblAmo.setText(Integer.toString(rs.getInt("amount")));
+							txtDe.setText(rs.getString("description"));
+						}
+					}
+					stmt.close();
+					conn.close();
+				}catch(Exception e1) {
+					System.out.println("Error"+e1);
+				}
+			}
+		});
+		
+
+		btnOk.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		
+	}
+	void createDB() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = (Connection) DriverManager.getConnection(db, username, password);
+		} catch (Exception e) {
+			System.out.println("error");
+		}
+	}
+}

@@ -1,0 +1,23 @@
+package TourPackage;
+
+public class Person {
+	String pname;
+	String pdob;
+	String pnrc;
+	String pgender;
+	String pphno;
+	String pemail;
+	String paddress;
+	
+	public Person(String pname, String pdob, String pnrc, String pgender, String pphno, String pemail,
+			String paddress) {
+		super();
+		this.pname = pname;
+		this.pdob = pdob;
+		this.pnrc = pnrc;
+		this.pgender = pgender;
+		this.pphno = pphno;
+		this.pemail = pemail;
+		this.paddress = paddress;
+	}
+}

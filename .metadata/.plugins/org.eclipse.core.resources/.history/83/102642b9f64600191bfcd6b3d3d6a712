@@ -1,0 +1,138 @@
+package TourPackage;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import Database.ShowResult;
+import Database.Statement;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+
+public class CustomerLogin extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField txtNa;
+	private JTextField txtPwd;
+	private JButton btnLogin;
+	Connection conn;
+	String db="jdbc:mysql://localhost/tourpackagedb";
+	String username="root";
+	String password="root";
+	java.sql.Statement stmt;
+	String sql;
+	ResultSet rs;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CustomerLogin frame = new CustomerLogin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public CustomerLogin() {
+		setTitle("Login Form for Customers");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 523, 273);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 222, 173));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblLoginForm = new JLabel("Login Form");
+		lblLoginForm.setFont(new Font("Times New Roman", Font.BOLD, 16));
+		lblLoginForm.setBounds(213, 11, 92, 25);
+		contentPane.add(lblLoginForm);
+		
+		JLabel lblName = new JLabel("Name");
+		lblName.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblName.setBounds(83, 69, 46, 14);
+		contentPane.add(lblName);
+		
+		JLabel lblPassword = new JLabel("Password");
+		lblPassword.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblPassword.setBounds(83, 112, 73, 14);
+		contentPane.add(lblPassword);
+		
+		txtNa = new JTextField();
+		txtNa.setBackground(new Color(211, 211, 211));
+		txtNa.setBounds(252, 67, 153, 20);
+		contentPane.add(txtNa);
+		txtNa.setColumns(10);
+		
+		txtPwd = new JTextField();
+		txtPwd.setBackground(new Color(211, 211, 211));
+		txtPwd.setColumns(10);
+		txtPwd.setBounds(252, 110, 153, 20);
+		contentPane.add(txtPwd);
+		
+		btnLogin = new JButton("Login");
+		btnLogin.setBackground(new Color(244, 164, 96));
+		btnLogin.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		btnLogin.setBounds(316, 162, 89, 23);
+		contentPane.add(btnLogin);
+		
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				boolean flag=false;
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					sql="select * from customertb";
+					rs=stmt.executeQuery(sql);
+					while(rs.next()) {
+						if((txtNa.getText().equals(rs.getString("cname"))) && 
+								(txtPwd.getText().equals(rs.getString("Password")))) {
+							Booking frame=new Booking();
+							frame.setVisible(true);
+							flag=true;
+						}
+					}
+					if(!flag) {
+						JOptionPane.showMessageDialog(null, "Username and Password aren't match!!");
+					}
+
+					stmt.close();
+					conn.close();
+				}catch(Exception e1) {
+					System.out.println("Error"+e1);
+				}
+			}
+		});
+	}
+	void createDB() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = (Connection) DriverManager.getConnection(db, username, password);
+		} catch (Exception e) {
+			System.out.println("error");
+		}
+	}
+}

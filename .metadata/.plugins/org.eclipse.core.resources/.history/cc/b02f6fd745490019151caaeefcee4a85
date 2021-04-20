@@ -1,0 +1,392 @@
+package TourPackage;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JOptionPane;
+
+import javax.swing.JTextArea;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.ImageIcon;
+
+public class Package extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	Connection conn;
+	String db="jdbc:mysql://localhost/tourpackagedb";
+	String username="root";
+	String password="root";
+	java.sql.Statement stmt;
+	String sql;
+	ResultSet rs;
+	private JTable table1;
+	private JLabel lblPackageId;
+	private JLabel lblid;
+	private JLabel lblName;
+	private JLabel lblType;
+	private JLabel lblDate;
+	private JLabel lblPrice;
+	private JLabel lblDescirption;
+	private JLabel lblPromotion;
+	private JTextArea txtDes;
+	private JTextField txtPro;
+	private JTextField txtDate;
+	private JTextField txtPrice;
+	private JTextField txtName;
+	private JLabel label;
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Package frame = new Package();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Package() {
+		setTitle("Package Information");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 773, 590);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 222, 173));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		lblPackageId = new JLabel("Package ID");
+		lblPackageId.setForeground(new Color(255, 255, 255));
+		lblPackageId.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblPackageId.setBounds(77, 11, 100, 14);
+		contentPane.add(lblPackageId);
+		
+		lblid = new JLabel("");
+		lblid.setForeground(new Color(255, 255, 255));
+		lblid.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblid.setBounds(232, 11, 100, 14);
+		contentPane.add(lblid);
+		
+		lblName = new JLabel("Name");
+		lblName.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblName.setBounds(77, 48, 100, 14);
+		contentPane.add(lblName);
+		
+		lblType = new JLabel("Type");
+		lblType.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblType.setBounds(77, 87, 100, 14);
+		contentPane.add(lblType);
+		
+		JRadioButton rdbtnPremiumPackage = new JRadioButton("Premium Package");
+		rdbtnPremiumPackage.setBackground(new Color(153, 204, 255));
+		rdbtnPremiumPackage.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		rdbtnPremiumPackage.setBounds(232, 84, 151, 23);
+		contentPane.add(rdbtnPremiumPackage);
+		
+		JRadioButton rdbtnStandardPackage = new JRadioButton("Standard Package");
+		rdbtnStandardPackage.setBackground(new Color(153, 204, 255));
+		rdbtnStandardPackage.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		rdbtnStandardPackage.setBounds(385, 84, 163, 23);
+		contentPane.add(rdbtnStandardPackage);
+		
+		ButtonGroup group=new ButtonGroup();
+		group.add(rdbtnPremiumPackage);
+		group.add(rdbtnStandardPackage);
+		
+		lblDate = new JLabel("Date");
+		lblDate.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblDate.setBounds(77, 129, 100, 14);
+		contentPane.add(lblDate);
+		
+		txtDate = new JTextField();
+		txtDate.setBackground(new Color(211, 211, 211));
+		txtDate.setBounds(232, 127, 163, 20);
+		contentPane.add(txtDate);
+		txtDate.setColumns(10);
+		
+		lblPrice = new JLabel("Price");
+		lblPrice.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblPrice.setBounds(77, 167, 100, 14);
+		contentPane.add(lblPrice);
+		
+		txtPrice = new JTextField();
+		txtPrice.setBackground(new Color(211, 211, 211));
+		txtPrice.setColumns(10);
+		txtPrice.setBounds(232, 165, 163, 20);
+		contentPane.add(txtPrice);
+		
+		lblDescirption = new JLabel("Descirption");
+		lblDescirption.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblDescirption.setBounds(77, 204, 100, 14);
+		contentPane.add(lblDescirption);
+		
+		lblPromotion = new JLabel("Promotion");
+		lblPromotion.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 14));
+		lblPromotion.setBounds(77, 284, 100, 14);
+		contentPane.add(lblPromotion);
+		
+		txtDes = new JTextArea();
+		txtDes.setBackground(new Color(211, 211, 211));
+		JScrollPane scrollPane = new JScrollPane(txtDes);
+		scrollPane.setBounds(233, 204, 315, 53);
+		contentPane.add(scrollPane);
+		
+		JButton btnNew = new JButton("NEW");
+		btnNew.setBackground(new Color(255, 160, 122));
+		btnNew.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnNew.setBounds(129, 313, 89, 23);
+		contentPane.add(btnNew);
+		
+		JButton btnInsert = new JButton("INSERT");
+		btnInsert.setBackground(new Color(255, 160, 122));
+		btnInsert.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnInsert.setBounds(256, 313, 89, 23);
+		contentPane.add(btnInsert);
+		
+		JButton btnUpdate = new JButton("UPDATE");
+		btnUpdate.setBackground(new Color(255, 160, 122));
+		btnUpdate.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnUpdate.setBounds(385, 313, 89, 23);
+		contentPane.add(btnUpdate);
+		
+		JButton btnDelete = new JButton("DELETE");
+		btnDelete.setBackground(new Color(255, 160, 122));
+		btnDelete.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnDelete.setBounds(519, 313, 89, 23);
+		contentPane.add(btnDelete);
+		
+		table1 = new JTable();
+		table1.setBackground(new Color(255, 218, 185));
+		JScrollPane scrollPane_1 = new JScrollPane(table1);
+		scrollPane_1.setBounds(10, 347, 737, 144);
+		contentPane.add(scrollPane_1);
+
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				txtName.setText("");
+				txtDate.setText("");
+				txtPrice.setText("");
+				txtDes.setText("");
+				txtPro.setText("");
+				
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					sql="select MAX(pgid) from packagetb";
+					rs=stmt.executeQuery(sql);
+					
+					while(rs.next()) {
+						int count=rs.getInt(1);
+						lblid.setText(String.valueOf(count+1));
+					}
+				}catch(Exception e1) {
+					System.out.println("Error"+e1);
+				}
+			}
+		});
+		
+
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					createDB();
+					
+					String type=null;
+					if(rdbtnPremiumPackage.isSelected())
+						type="Premium Package";
+					if(rdbtnStandardPackage.isSelected())
+						type="Standard Package";
+					stmt=conn.createStatement();					
+					
+					//============Insert===============
+
+					String sqlinsert="INSERT INTO packagetb VALUES ("+Integer.parseInt(lblid.getText())+",'"
+							+txtName.getText()+"','"+txtDate.getText()+"','"+type+"','"
+							+txtDes.getText()+"',"+Integer.parseInt(txtPrice.getText())+",'"+txtPro.getText()+"')";
+					stmt.executeUpdate(sqlinsert);
+					JOptionPane.showMessageDialog(null, "Insert Successful !!");
+					Package frame=new Package();
+					frame.setVisible(true);	
+							
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
+
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					createDB();
+					String type=null;
+					if(rdbtnPremiumPackage.isSelected())
+						type="Premium Package";
+					if(rdbtnStandardPackage.isSelected())
+						type="Standard Package";
+					stmt=conn.createStatement();				
+					
+					//============Update===============
+
+					String sqlupdate="UPDATE packagetb SET pgname = '"+txtName.getText()+"',pgdate='"
+					+txtDate.getText()+"',type='"+type+"',description='"+txtDes.getText()+"',price="
+					+Integer.parseInt(txtPrice.getText())+",promotion='"+txtPro.getText()+"'where pgid="
+					+Integer.parseInt(lblid.getText())+"";
+					stmt.executeUpdate(sqlupdate);
+					JOptionPane.showMessageDialog(null, "Update Successful !!");
+					Package frame=new Package();
+					frame.setVisible(true);	
+					
+					if(stmt !=null) {
+						stmt.close();
+						conn.close();
+					}
+							
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					createDB();
+					stmt=conn.createStatement();
+					String sql="DELETE FROM packagetb WHERE pgid="+lblid.getText();
+					
+					int choice=JOptionPane.showConfirmDialog(null, "You want to Delete!!!\n Roll No. "+lblid.getText());
+					
+					if(choice==JOptionPane.YES_OPTION) {
+						stmt.executeUpdate(sql);
+						JOptionPane.showMessageDialog(null, "Delete Successful!!!");
+						Package frame=new Package();
+						frame.setVisible(true);	
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Cancelled.");
+					}
+					if(stmt!=null) {
+						stmt.close();
+						conn.close();
+					}
+				}catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
+		//Show Table
+		table1.setModel(new DefaultTableModel(
+				new Object[][] {	},new String[] {"ID","Name","Date","Type","Description","Price","Promotion"}));
+		
+		txtPro = new JTextField();
+		txtPro.setColumns(10);
+		txtPro.setBackground(new Color(211, 211, 211));
+		txtPro.setBounds(232, 282, 163, 20);
+		contentPane.add(txtPro);
+		
+		txtName = new JTextField();
+		txtName.setColumns(10);
+		txtName.setBackground(new Color(211, 211, 211));
+		txtName.setBounds(232, 46, 316, 20);
+		contentPane.add(txtName);
+		
+		label = new JLabel("");
+		label.setIcon(new ImageIcon("C:\\Users\\Aspire\\Pictures\\Saved Pictures\\1.jpg"));
+		label.setBounds(0, 0, 757, 511);
+		contentPane.add(label);
+		
+		JButton btnBack = new JButton("BACK");
+		btnBack.setFont(new Font("Times New Roman", Font.BOLD, 13));
+		btnBack.setBackground(new Color(255, 160, 122));
+		btnBack.setBounds(43, 517, 89, 23);
+		contentPane.add(btnBack);
+		
+		DefaultTableModel model=(DefaultTableModel) table1.getModel();
+		try {
+			createDB();
+			
+			stmt=conn.createStatement();
+			sql="select * from packagetb";
+			rs=stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				String rno=Integer.toString(rs.getInt("pgid"));
+				String name=rs.getString("pgname");
+				String date=rs.getString("pgdate");
+				String type=rs.getString("type");
+				String description=rs.getString("description");
+				String price=Integer.toString(rs.getInt("price"));
+				String promo=rs.getString("promotion");
+				
+				String data[]=new String [] {rno,name,date,type,description,price,promo};
+				model.addRow(data);
+			}
+			stmt.close();
+			conn.close();
+		}catch(Exception e1) {
+			System.out.println("Error"+e1);
+		}
+		
+		//select row
+		table1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int i =table1.getSelectedRow();
+				lblid.setText(model.getValueAt(i, 0).toString());
+				txtName.setText(model.getValueAt(i, 1).toString());
+				txtDate.setText(model.getValueAt(i, 2).toString());
+				txtDes.setText(model.getValueAt(i, 4).toString());
+				txtPrice.setText(model.getValueAt(i, 5).toString());
+				txtPro.setText(model.getValueAt(i, 6).toString());
+			}
+		});
+		
+		
+		
+	}
+	void createDB() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = (Connection) DriverManager.getConnection(db, username, password);
+		} catch (Exception e) {
+			System.out.println("error");
+		}
+	}
+}
